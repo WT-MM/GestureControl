@@ -1,13 +1,11 @@
 from sklearn import svm
 from sklearn.model_selection import train_test_split
 import pickle
-   
-   
-   
+
 X = []
 Y = []
 
-with open("data/collated.txt", "r") as f:
+with open("collated.txt", "r") as f:
     for l in f.readlines():
         temp = []
         classification = ""
@@ -22,7 +20,6 @@ X_train, X_test, y_train, y_test = train_test_split(X,Y,train_size=0.8, random_s
         
 clf = svm.SVC(decision_function_shape='ovo')
 clf.fit(X_train,y_train)
-
 
 mm = clf.predict(X_test)
 

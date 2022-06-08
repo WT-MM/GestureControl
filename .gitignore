@@ -2,3 +2,4 @@ env/
 reference/
 data/
 __pycache__
+collated.txt

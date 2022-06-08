@@ -2,6 +2,7 @@ import mediapipe as mp
 from mediapipe.framework.formats import landmark_pb2
 import cv2
 import uuid
+import os
 
 
 labels = ['fist', 'face', 'corner', 'cup', 'circle', 'side', 'forward', 'checkmark']
@@ -87,7 +88,18 @@ def getRelPositions(landmarks):
     dists.append(calcDist(17,0, landmarks))
     return [item for sublist in dists for item in sublist]
 
-    
+
+def collateData():
+    files = os.listdir("data/")
+    lines = []
+    for file in files:
+        with open("data/"+file, 'r') as f:
+            tLines = f.read().splitlines()
+            lines.extend(tLines)
+    with open("collated.txt", "w") as f:
+        for line in lines:
+            f.write(line + "\n")
+
         
 def calcDist(first, second, landmarks):
     return (landmarks[first].x-landmarks[second].x, landmarks[first].y-landmarks[second].y, landmarks[first].z-landmarks[second].z)
