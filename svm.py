@@ -20,10 +20,13 @@ X_train, X_test, y_train, y_test = train_test_split(X,Y,train_size=0.8, random_s
         
 clf = svm.SVC(decision_function_shape='ovo')
 clf.fit(X_train,y_train)
-
 mm = clf.predict(X_test)
-
 acc = clf.score(X_test, y_test)
+
+#Have to tweak once more data is gathered
+tm = svm.SVC(decision_function_shape='ovo', C=5)
+tm.fit(X_train,y_train)
+tacc=tm.score(X_test,y_test)
 
 correct = []
 for i in range(len(X_test)):
@@ -32,10 +35,11 @@ for i in range(len(X_test)):
     else:
         correct.append("NO")
 
-print(mm)
 print("Accuracy: " + str(acc))
-print("Comparison: ")
-print(correct)
+print("Other Acc: " + str(tacc))
+#print(mm)
+#print("Comparison: ")
+#print(correct)
 
 with open('model.pkl', 'wb') as f:
     pickle.dump(clf,f)
