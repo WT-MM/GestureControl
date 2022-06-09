@@ -3,7 +3,7 @@ from mediapipe.framework.formats import landmark_pb2
 import cv2
 import uuid
 import os
-
+from utility import *
 
 labels = ['fist', 'face', 'corner', 'cup', 'circle', 'side', 'forward', 'checkmark']
 
@@ -54,55 +54,12 @@ def main():
                         saved.append(str(calced)[1:-1] + ", " + labels[label])
 
             if cv2.waitKey(5) & 0xFF == 27:
-                with open("data/" + sessionName+".txt", "w") as f:
+                with open("data/static/" + sessionName+".txt", "w") as f:
                     for i in saved:
                         f.write(i+"\n")               
                 break
             cv2.imshow('Data Collection', image)
     cap.release()
-    
-    
-def getRelPositions(landmarks):
-    landmarks = landmarks.landmark
-    dists = []
-    dists.append(calcDist(1,0, landmarks))
-    dists.append(calcDist(2,1, landmarks))
-    dists.append(calcDist(3,2, landmarks))
-    dists.append(calcDist(4,3, landmarks))
-    dists.append(calcDist(5,0, landmarks))
-    dists.append(calcDist(6,5, landmarks))
-    dists.append(calcDist(7,6, landmarks))
-    dists.append(calcDist(8,7, landmarks))
-    dists.append(calcDist(9,5, landmarks))
-    dists.append(calcDist(10,9, landmarks))
-    dists.append(calcDist(11,10, landmarks))
-    dists.append(calcDist(12,11, landmarks))
-    dists.append(calcDist(13,9, landmarks))
-    dists.append(calcDist(14,13, landmarks))
-    dists.append(calcDist(15,14, landmarks))
-    dists.append(calcDist(16,15, landmarks))
-    dists.append(calcDist(17,13, landmarks))
-    dists.append(calcDist(18,17, landmarks))
-    dists.append(calcDist(19,18, landmarks))
-    dists.append(calcDist(20,19, landmarks))
-    dists.append(calcDist(17,0, landmarks))
-    return [item for sublist in dists for item in sublist]
-
-
-def collateData():
-    files = os.listdir("data/")
-    lines = []
-    for file in files:
-        with open("data/"+file, 'r') as f:
-            tLines = f.read().splitlines()
-            lines.extend(tLines)
-    with open("collated.txt", "w") as f:
-        for line in lines:
-            f.write(line + "\n")
-
-        
-def calcDist(first, second, landmarks):
-    return (landmarks[first].x-landmarks[second].x, landmarks[first].y-landmarks[second].y, landmarks[first].z-landmarks[second].z)
     
 if __name__ == "__main__":
     main()

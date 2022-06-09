@@ -1,7 +1,7 @@
 import mediapipe as mp
 import cv2
-import collectData
 import pickle
+from utility import *
 
 def test():
     try:
@@ -79,7 +79,7 @@ def main():
             currentInf = []
             if results.multi_hand_landmarks:
                 for hand_landmarks in results.multi_hand_landmarks:
-                    calced= collectData.getRelPositions(hand_landmarks)
+                    calced= getRelPositions(hand_landmarks)
                     inDat = calced
                     inference=clf.predict([inDat])
                     currentInf.append(inference)
