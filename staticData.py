@@ -9,15 +9,15 @@ labels = ['fist', 'face', 'corner', 'cup', 'circle', 'side', 'forward', 'checkma
 
 def main():
     sessionName = str(uuid.uuid4())
+    print("Session name is " + sessionName)
     print("Change the slider to change the recorded position")
     print("Use spacebar to save positions")
     print("Use esc to write to file and quit the program")
-    print("Session name is " + sessionName)
     mp_drawing = mp.solutions.drawing_utils
     mp_hands = mp.solutions.hands
     cap = cv2.VideoCapture(0)
     cv2.namedWindow('Data Collection')
-    cv2.createTrackbar('Position', 'Data Collection', 0,7, lambda _ :None)
+    cv2.createTrackbar('Position', 'Data Collection', 0,len(labels)-1, lambda _ :None)
     with mp_hands.Hands(
         min_detection_confidence=0.7,
         min_tracking_confidence=0.5) as hands:
@@ -62,4 +62,5 @@ def main():
     cap.release()
     
 if __name__ == "__main__":
+    os.makedirs("data/static/", exist_ok=True)
     main()

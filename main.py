@@ -5,7 +5,7 @@ from utility import *
 
 def test():
     try:
-        with open('model.pkl', 'rb') as f:
+        with open('models/static.pkl', 'rb') as f:
                 clf = pickle.load(f)
     except FileNotFoundError:
         print("Missing SVM pkl file")
@@ -37,7 +37,7 @@ def test():
             if results.multi_hand_landmarks:
                 for hand_landmarks in results.multi_hand_landmarks:
                     mp_drawing.draw_landmarks(image, hand_landmarks, mp_hands.HAND_CONNECTIONS)
-                    calced= collectData.getRelPositions(hand_landmarks)
+                    calced= getRelPositions(hand_landmarks)
                     inDat = calced
                     inference=clf.predict([inDat])
                     image = cv2.putText(image, inference[0], (50,50), cv2.FONT_HERSHEY_COMPLEX, 1, (255,0,0), 2, cv2.LINE_AA)
@@ -49,15 +49,18 @@ def test():
 
 def main():
     try:
-        with open('model.pkl', 'rb') as f:
-                clf = pickle.load(f)
+        with open('models/motion.pkl', 'rb') as f:
+            motionCLF = pickle.load(f)
+        with open('models/static.pkl', 'rb') as f:
+            staticCLF = pickle.load(f)
     except FileNotFoundError:
-        print("Missing SVM pkl file")
+        print("Missing SVM pkl file(s)")
         exit()
     mp_hands = mp.solutions.hands
     
     cap = cv2.VideoCapture(0)
-    histInf = ['','','','','']
+    fps = int(cap.get(cv2.CAP_PROP_FPS))
+    motionData = ["" for i in range(fps)]
     with mp_hands.Hands(
         min_detection_confidence=0.7,
         min_tracking_confidence=0.5) as hands:
@@ -81,11 +84,19 @@ def main():
                 for hand_landmarks in results.multi_hand_landmarks:
                     calced= getRelPositions(hand_landmarks)
                     inDat = calced
-                    inference=clf.predict([inDat])
-                    currentInf.append(inference)
-            histInf.append(currentInf[0])
-            histInf.pop(0)
-            print(histInf)
+                    staticInf=staticCLF.predict([inDat])
+                    
+                    motionData.append(hand_landmarks.landmark)
+                    motionData.pop(0)
+                    motIn = getInitDiff(processArray(motionData))
+                    motionInf = motionCLF.predict([motIn])
+                    #Testing purposes
+                    print("Static Inference: " + staticInf)
+                    print("Motion Inference: " + motionInf) 
+                    image.flags.writeable = True
+                    image = cv2.putText(image, "Static Inference: " + staticInf[0], (50,50), cv2.FONT_HERSHEY_COMPLEX, 1, (255,0,0), 2, cv2.LINE_AA)
+                    image = cv2.putText(image, "Motion Inference: " + motionInf[0], (50,100), cv2.FONT_HERSHEY_COMPLEX, 1, (255,0,0), 2, cv2.LINE_AA)
+
     cap.release()
 
 

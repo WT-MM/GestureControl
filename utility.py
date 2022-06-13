@@ -1,4 +1,5 @@
 import os
+import random
 
 def getRelPositions(landmarks):
     landmarks = landmarks.landmark
@@ -28,6 +29,34 @@ def getRelPositions(landmarks):
 
 def calcDist(first, second, landmarks):
     return (landmarks[first].x-landmarks[second].x, landmarks[first].y-landmarks[second].y, landmarks[first].z-landmarks[second].z)
+
+#Stuff for motion
+
+def processArray(fps, array):
+    arr = array.copy()
+    if(fps > 30):
+        extra = fps-30
+        for i in range(extra):
+            arr.pop(random.randrange(len(arr)))
+    elif(fps < 30):
+        missing = 30-fps
+        for i in range(missing):
+            num = random.randrange(2,len(arr)-2)
+            arr.insert(num, arr[num-1])
+    return arr.copy()
+
+def getInitDiff(array):
+    newArr = []
+    for i in range(len(array)):
+        newArr.append(compareInstances(array[0], array[i]))
+    return [item for sublist in newArr for item in sublist]
+    
+def compareInstances(first, second):
+    dists = []
+    for i in range(21):
+        dists.append([second[i].x - first[i].x, second[i].y - first[i].y, second[i].z - first[i].z])
+    return [item for sublist in dists for item in sublist]
+
 
 def collateData(dir, name="collated.txt"):
     files = os.listdir(dir)
