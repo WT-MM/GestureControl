@@ -85,17 +85,22 @@ def main():
                     calced= getRelPositions(hand_landmarks)
                     inDat = calced
                     staticInf=staticCLF.predict([inDat])
+                    staticProba = staticCLF.predict_proba([inDat])
                     
                     motionData.append(hand_landmarks.landmark)
                     motionData.pop(0)
                     motIn = getInitDiff(processArray(motionData))
                     motionInf = motionCLF.predict([motIn])
+                    motionProba = motionCLF.predict_proba([motIn])
                     #Testing purposes
                     print("Static Inference: " + staticInf)
                     print("Motion Inference: " + motionInf) 
+                    print("Static probability: " + staticProba)
+                    print("Motion probability" + motionProba)
                     image.flags.writeable = True
                     image = cv2.putText(image, "Static Inference: " + staticInf[0], (50,50), cv2.FONT_HERSHEY_COMPLEX, 1, (255,0,0), 2, cv2.LINE_AA)
                     image = cv2.putText(image, "Motion Inference: " + motionInf[0], (50,100), cv2.FONT_HERSHEY_COMPLEX, 1, (255,0,0), 2, cv2.LINE_AA)
+            cv2.imshow("mmmmm", image) #Delete when done testing
 
     cap.release()
 

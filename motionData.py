@@ -40,8 +40,6 @@ Then, it should be processed before saving/feeding
 
 Issue: differentiating gestures from non gestures
 
-
-
 '''
 
 

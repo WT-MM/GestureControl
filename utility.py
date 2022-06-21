@@ -1,5 +1,10 @@
 import os
 import random
+import argparse
+
+parser = argparse.ArgumentParser()
+parser.add_argument('--collate', type="str", help="Collate 'motion' or 'static' data")
+
 
 def getRelPositions(landmarks):
     landmarks = landmarks.landmark
@@ -68,3 +73,9 @@ def collateData(dir, name="collated.txt"):
     with open(name, "w") as f:
         for line in lines:
             f.write(line + "\n")
+
+if __name__ == "__main__":
+    options = parser.parse_args()
+    if options.collate in ['static', 'motion']:
+        collateData("data/"+options.collate, name="data/"+options.collate+"collated.txt")
+                

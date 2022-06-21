@@ -1,11 +1,27 @@
+from pyparsing import StringEnd
 from sklearn import svm
 from sklearn.model_selection import train_test_split
 import pickle
+import argparse
+
+
+parser = argparse.ArgumentParser()
+parser.add_argument('--static', action="store_true")
+parser.add_argument('--motion', action='store_true')
+options = parser.parse_args()
 
 X = []
 Y = []
 
-with open("collated.txt", "r") as f:
+if options.static:
+    typ = "static"
+elif options.motion:
+    typ = "motion"
+else:
+    print("No svm type given")
+    exit
+
+with open("data/"+typ + "collated.txt", "r") as f:
     for l in f.readlines():
         temp = []
         classification = ""
@@ -17,7 +33,7 @@ with open("collated.txt", "r") as f:
         Y.append(classification)
 
 X_train, X_test, y_train, y_test = train_test_split(X,Y,train_size=0.8, random_state=0)
-        
+
 clf = svm.SVC(decision_function_shape='ovo')
 clf.fit(X_train,y_train)
 mm = clf.predict(X_test)
@@ -41,5 +57,5 @@ print("Other Acc: " + str(tacc))
 #print("Comparison: ")
 #print(correct)
 
-with open('model.pkl', 'wb') as f:
+with open('models/'+typ+'.pkl', 'wb') as f:
     pickle.dump(clf,f)
