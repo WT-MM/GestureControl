@@ -1,10 +1,36 @@
 import os
 import random
 import argparse
+from numpy import argmax
+from numpy import array
+
+from sklearn.preprocessing import LabelEncoder, OneHotEncoder
 
 parser = argparse.ArgumentParser()
-parser.add_argument('--collate', type="str", help="Collate 'motion' or 'static' data")
+parser.add_argument('--collate', type=str, help="Collate 'motion' or 'static' data")
 
+
+def getStaticClasses():
+    return ['fist', 'face', 'corner', 'cup', 'circle', 'side', 'forward', 'checkmark']
+
+def staticEncoder():
+    label_encoder = LabelEncoder()
+    integer_encoded = label_encoder.fit_transform(array(getStaticClasses()))
+    
+    onehot_encoder = OneHotEncoder(sparse=False)
+    integer_encoded = integer_encoded.reshape(len(integer_encoded), 1)
+    return [label_encoder, onehot_encoder]
+
+def staticEncode(data, intEnc=staticEncoder()[0], onehotEnc=staticEncoder()[1]):
+    
+    integer_encoded = intEnc.fit_transform(array(data))
+    # binary encode
+    integer_encoded = integer_encoded.reshape(len(integer_encoded), 1)
+    onehot_encoded = onehotEnc.fit_transform(integer_encoded)
+    return onehot_encoded
+
+def decodeStatic(mm, label_encoder=staticEncoder()[0]):
+    return label_encoder.inverse_transform(mm)
 
 def getRelPositions(landmarks):
     landmarks = landmarks.landmark

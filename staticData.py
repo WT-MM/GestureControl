@@ -5,7 +5,7 @@ import uuid
 import os
 from utility import *
 
-labels = ['fist', 'face', 'corner', 'cup', 'circle', 'side', 'forward', 'checkmark']
+labels = getStaticClasses()
 
 def main():
     sessionName = str(uuid.uuid4())
